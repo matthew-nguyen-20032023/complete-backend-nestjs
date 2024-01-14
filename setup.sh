@@ -4,8 +4,8 @@
 yarn;
 
 # Setup backend components
+cp .env.example .env;
 docker-compose up -d;
 
-cp .env.example .env;
 
 yarn start:dev;
