@@ -1,9 +1,10 @@
-import { Controller, Get, HttpStatus, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Post, Query } from "@nestjs/common";
 import { Public } from "src/modules/authentication/auth.const";
 import { MathService } from "src/modules/math/math.service";
 import { IResponseToClient } from "src/configs/response-to-client.config";
 import { SumDto } from "src/modules/math/dto/sum.dto";
 import { MathSuccessMessage } from "src/modules/math/math.const";
+import { MinusDto } from "src/modules/math/dto/minus.dto";
 
 @Controller("math")
 export class MathController {
@@ -22,9 +23,12 @@ export class MathController {
 
   @Post("minus")
   @Public()
-  async minusTwoNumber() {
-    let first = 1
-    let second = 3
-    return await this.mathService.minusTwoNumber(first, second)
+  async minusTwoNumber(@Body() minusDto: MinusDto): Promise<IResponseToClient> {
+    const data = await this.mathService.minusTwoNumber(minusDto.firstNumber, minusDto.secondNumber);
+    return {
+      message: MathSuccessMessage.MinusTwoNumberSuccess,
+      data,
+      statusCode: HttpStatus.CREATED,
+    }
   }
 }
