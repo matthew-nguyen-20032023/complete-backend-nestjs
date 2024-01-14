@@ -1,4 +1,4 @@
-import {Body, Controller, Get, HttpStatus, Post} from "@nestjs/common";
+import {Body, Controller, Get, HttpStatus, Post, Query} from "@nestjs/common";
 import { ApiOperation } from "@nestjs/swagger";
 import { IResponseToClient } from "src/configs/response-to-client.config";
 import { Public } from "../authentication/auth.const";
@@ -10,10 +10,8 @@ export class MathController {
 
   @Get("sum")
   @Public()
-  async sumTwoNumber() {
-    let first = 1
-    let second = 3
-    return await this.mathService.sumTwoNumber(first, second)
+  async sumTwoNumber(@Query() query) {
+    return await this.mathService.sumTwoNumber(Number(query.firstNumber), Number(query.secondNumber))
   }
 
   @Post("minus")
