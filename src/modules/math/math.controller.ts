@@ -1,8 +1,9 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Post, Query} from "@nestjs/common";
-import { ApiOperation } from "@nestjs/swagger";
+import { Controller, Get, HttpStatus, Post, Query } from "@nestjs/common";
+import { Public } from "src/modules/authentication/auth.const";
+import { MathService } from "src/modules/math/math.service";
 import { IResponseToClient } from "src/configs/response-to-client.config";
-import { Public } from "../authentication/auth.const";
-import {MathService} from "./math.service";
+import { SumDto } from "src/modules/math/dto/sum.dto";
+import { MathSuccessMessage } from "src/modules/math/math.const";
 
 @Controller("math")
 export class MathController {
@@ -10,11 +11,13 @@ export class MathController {
 
   @Get("sum")
   @Public()
-  async sumTwoNumber(@Query() query) {
-    if (Number(query.firstNumber) < 0) {
-      throw new HttpException({messaage: 'Input number must be greater than 0'}, HttpStatus.BAD_REQUEST);
+  async sumTwoNumber(@Query() sumDto: SumDto): Promise<IResponseToClient> {
+    const data = await this.mathService.sumTwoNumber(sumDto.firstNumber, sumDto.secondNumber);
+    return {
+      message: MathSuccessMessage.SumTwoNumberSuccess,
+      data,
+      statusCode: HttpStatus.OK,
     }
-    return await this.mathService.sumTwoNumber(Number(query.firstNumber), Number(query.secondNumber))
   }
 
   @Post("minus")
