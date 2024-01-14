@@ -1,7 +1,6 @@
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
 import { AuthMessageError } from "src/modules/authentication/auth.const";
 import { ILoginResponse } from "src/modules/authentication/auth.interface";
 
