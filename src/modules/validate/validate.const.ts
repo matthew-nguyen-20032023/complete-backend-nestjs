@@ -1,9 +1,8 @@
 export enum ValidateSuccessMessage {
     HashPasswordSuccessfully = "Password hash successfully",
-    ValidateSuccessMessage = "Password & Hash are perfect match",
-    CompleteCompare = "Complete compare password & hash",
+    ValidateSuccessMessage = "Password & hash are perfectly match",
 }
 
 export enum ValidateFailedMessage {
-    ValidateFailMessage = "Password & Hash aren't match",
+    ValidateFailMessage = "Password & hash aren't match",
 }

@@ -5,8 +5,8 @@ import { Public } from "src/modules/authentication/auth.const";
 import { IResponseToClient } from "src/configs/response-to-client.config";
 import { GetHashPasswordDto } from "src/modules/validate/dto/get-hash-password.dto";
 import { ValidateService } from "src/modules/validate/validate.service";
-import { ValidateSuccessMessage } from "./validate.const";
-import { VerifyHashPasswordDto } from "./dto/verify-hash-password.dto";
+import {ValidateFailedMessage, ValidateSuccessMessage} from "src/modules/validate/validate.const";
+import { VerifyHashPasswordDto } from "src/modules/validate/dto/verify-hash-password.dto";
 
 @Controller("validate")
 @ApiTags("Validate")
@@ -46,7 +46,7 @@ export class ValidateController {
   async verifyHashPassword(@Query() verifyHashPasswordDto: VerifyHashPasswordDto): Promise<IResponseToClient> {
     const data = await  this.validateService.comparePasswordHashed(verifyHashPasswordDto.verifyPassword, verifyHashPasswordDto.passwordHashed);
     return {
-      message: ValidateSuccessMessage.CompleteCompare,
+      message: data ? ValidateSuccessMessage.ValidateSuccessMessage : ValidateFailedMessage.ValidateFailMessage,
       data,
       statusCode: HttpStatus.OK,
     }

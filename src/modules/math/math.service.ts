@@ -19,7 +19,7 @@ export class MathService {
         return firstNumber + secondNumber
     }
 
-    public async minusTwoNumber(firstNumber: number, secondNumber: number) {
+    public async minusTwoNumber(firstNumber: number, secondNumber: number) : Promise<number> {
         return firstNumber - secondNumber
     }
 }
