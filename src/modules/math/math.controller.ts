@@ -15,7 +15,7 @@ export class MathController {
 
   @Get("sum")
   @ApiOperation({
-    summary: 'Api to calculate two number'
+    summary: 'Api to sum two number'
   })
   @Public()
   async sumTwoNumber(@Query() sumDto: SumDto): Promise<IResponseToClient> {
@@ -28,6 +28,9 @@ export class MathController {
   }
 
   @Post("minus")
+  @ApiOperation({
+    summary: 'Api to minus two number'
+  })
   @Public()
   async minusTwoNumber(@Body() minusDto: MinusDto): Promise<IResponseToClient> {
     const data = await this.mathService.minusTwoNumber(minusDto.firstNumber, minusDto.secondNumber);
