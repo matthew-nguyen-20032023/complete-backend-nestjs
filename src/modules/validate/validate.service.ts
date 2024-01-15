@@ -1,7 +1,6 @@
-import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
-
 const bcrypt = require('bcrypt');
-const saltRounds = 10
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { ValidateFailedMessage } from "src/modules/validate/validate.const";
 
 @Injectable()
 export class ValidateService {
@@ -9,21 +8,16 @@ export class ValidateService {
     constructor() {}
 
     public async hashPassword(password: string): Promise<string> {
-        try {
-            const salt = await bcrypt.genSalt(saltRounds);
-            return await bcrypt.hash(password, salt);
-        } catch (error) {
-            throw new HttpException({
-                message: error
-            }, HttpStatus.BAD_REQUEST);
-        }
+        return await bcrypt.hash(password, await bcrypt.genSalt(Number(process.env.SALT_OR_ROUNDS)));
     }
 
     public async comparePasswordHashed(verifyPassword: string, passwordHashed: string): Promise<boolean> {
-        try {
-            return await bcrypt.compare(verifyPassword, passwordHashed);
-        } catch (error) {
-            return false;
+        const result = await bcrypt.compare(verifyPassword, passwordHashed);
+        if (!result) {
+            throw new HttpException({
+                message: ValidateFailedMessage.ValidateFailMessage
+            }, HttpStatus.BAD_REQUEST);
         }
+        return true;
     }
 }
