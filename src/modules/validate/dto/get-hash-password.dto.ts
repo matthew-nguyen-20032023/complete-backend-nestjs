@@ -1,7 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber } from "class-validator";
-import { Type } from "class-transformer";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class GetHashPasswordDto {
-
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        description: "Your password",
+        required: true,
+        example: "your_password",
+    })
+    password: string;
 }

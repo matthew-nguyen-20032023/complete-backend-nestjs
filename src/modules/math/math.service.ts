@@ -7,8 +7,8 @@ export class MathService {
 
     /**
      * @description: This function use to calculate two number input from client
-     * @param firstNumber: The first parameter input from client
-     * @param secondNumber: The second parameter input from client
+     * @param firstNumber
+     * @param secondNumber
      */
     public async sumTwoNumber(firstNumber: number, secondNumber: number): Promise<number> {
         if (firstNumber < 0 || secondNumber < 0) {
@@ -19,7 +19,7 @@ export class MathService {
         return firstNumber + secondNumber
     }
 
-    public async minusTwoNumber(firstNumber, secondNumber) {
+    public async minusTwoNumber(firstNumber: number, secondNumber: number) : Promise<number> {
         return firstNumber - secondNumber
     }
 }
