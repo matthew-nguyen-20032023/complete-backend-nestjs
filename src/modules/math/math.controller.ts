@@ -1,4 +1,4 @@
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Body, Controller, Get, HttpStatus, Post, Query } from "@nestjs/common";
 
 import { Public } from "src/modules/authentication/auth.const";
@@ -10,6 +10,7 @@ import { MinusDto } from "src/modules/math/dto/minus.dto";
 
 @Controller("math")
 @ApiTags("Math")
+@ApiBearerAuth()
 export class MathController {
   constructor(private readonly mathService : MathService) {}
 
@@ -17,7 +18,6 @@ export class MathController {
   @ApiOperation({
     summary: 'Api to sum two number'
   })
-  @Public()
   async sumTwoNumber(@Query() sumDto: SumDto): Promise<IResponseToClient> {
     const data = await this.mathService.sumTwoNumber(sumDto.firstNumber, sumDto.secondNumber);
     return {
@@ -31,7 +31,6 @@ export class MathController {
   @ApiOperation({
     summary: 'Api to minus two number'
   })
-  @Public()
   async minusTwoNumber(@Body() minusDto: MinusDto): Promise<IResponseToClient> {
     const data = await this.mathService.minusTwoNumber(minusDto.firstNumber, minusDto.secondNumber);
     return {
