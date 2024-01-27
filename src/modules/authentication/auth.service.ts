@@ -1,34 +1,38 @@
-import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
-import { LoginFailMessage} from "src/modules/authentication/auth.const";
-
 const bcrypt = require('bcrypt');
-const saltRounds = 10
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { AuthMessageFailed } from "src/modules/authentication/auth.const";
+import { UserRepository } from "src/models/repositories/user.repository";
+import { UserEntity } from "src/models/entities/user.entity";
 
 @Injectable()
 export class AuthService {
 
-    constructor() {}
+    constructor(
+        private readonly userRepository: UserRepository,
+    ) {}
 
-    public async authRegister(userName: string, password: string): Promise<string> {
-        try {
-            const salt = await bcrypt.genSalt(saltRounds);
-            return await bcrypt.hash(password, salt);
-        } catch (error) {
-            throw new HttpException({
-                message: error
-            }, HttpStatus.BAD_REQUEST);
-        }
+    public async register(userName: string, password: string): Promise<UserEntity> {
+        const salt = await bcrypt.genSalt(Number(process.env.SALT_OR_ROUNDS));
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const newUser = new UserEntity();
+        newUser.username = userName;
+        newUser.password = hashedPassword;
+        return await this.userRepository.save(newUser);
     }
 
-    public async authLogin(userName: string, password: string): Promise<boolean> {
-        const passwordHashed = 'dong@tuananh'
-        const passwordCompareResult = await bcrypt.compare(password, passwordHashed);
-        const usernameCompareResult = true
-        if (!passwordCompareResult || !usernameCompareResult) {
-            throw new HttpException({
-                message: LoginFailMessage.LoginFailMessage
-            }, HttpStatus.BAD_REQUEST);
+    public async login(userName: string, password: string): Promise<boolean> {
+        const user = await this.userRepository.getUserByUsername(userName);
+
+        if (!user) {
+            throw new HttpException({ message: AuthMessageFailed.UsernameOrPasswordIncorrect }, HttpStatus.BAD_REQUEST);
         }
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordMatch) {
+            throw new HttpException({ message: AuthMessageFailed.UsernameOrPasswordIncorrect }, HttpStatus.BAD_REQUEST);
+        }
+
         return true;
     }
 }

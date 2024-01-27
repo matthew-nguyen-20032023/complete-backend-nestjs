@@ -1,5 +1,5 @@
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Controller, Get, HttpStatus, Query } from "@nestjs/common";
+import { Body, Controller, HttpStatus, Post } from "@nestjs/common";
 import { Public } from "src/modules/authentication/auth.const";
 import { IResponseToClient } from "src/configs/response-to-client.config";
 import { LoginDto } from "src/modules/authentication/dto/login.dto";
@@ -13,27 +13,27 @@ export class AuthController {
     constructor(private readonly authService: AuthService) {
     }
 
-    @Get("register")
+    @Post("register")
     @ApiOperation({
         summary: 'Api to register'
     })
     @Public()
-    async getHashPassword(@Query() registerDto: RegisterDto): Promise<IResponseToClient> {
-        const data = await this.authService.authRegister(registerDto.userName, registerDto.password);
+    async getHashPassword(@Body() registerDto: RegisterDto): Promise<IResponseToClient> {
+        const data = await this.authService.register(registerDto.userName, registerDto.password);
         return {
             message: RegisterSuccessMessage.RegisterSuccess,
             data,
-            statusCode: HttpStatus.OK,
+            statusCode: HttpStatus.CREATED,
         }
     }
 
-    @Get("login")
+    @Post("login")
     @Public()
     @ApiOperation({
         summary: 'Api to login'
     })
-    async verifyHashPassword(@Query() loginDto: LoginDto): Promise<IResponseToClient> {
-        const data = await this.authService.authLogin(loginDto.userName, loginDto.password);
+    async verifyHashPassword(@Body() loginDto: LoginDto): Promise<IResponseToClient> {
+        const data = await this.authService.login(loginDto.userName, loginDto.password);
         return {
             message: LoginSuccessMessage.LoginSuccessMessage,
             data,
