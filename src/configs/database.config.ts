@@ -1,8 +1,11 @@
 export const DATABASE_CONFIG = {
-  type: process.env.DATABASE_TYPE,
-  host: process.env.DATABASE_HOST,
-  port: process.env.DATABASE_PORT,
-  userName: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASS,
-  databaseName: process.env.DATABASE_NAME,
+  type: process.env.MASTER_DATABASE_TYPE,
+  host: process.env.MASTER_DATABASE_HOST,
+  port: process.env.MASTER_DATABASE_PORT,
+  username: process.env.MASTER_DATABASE_USER,
+  password: process.env.MASTER_DATABASE_PASS,
+  database: process.env.MASTER_DATABASE_NAME,
+  entities: [
+    __dirname + '/../models/entities/*.entity{.ts,.js}',
+  ],
 };

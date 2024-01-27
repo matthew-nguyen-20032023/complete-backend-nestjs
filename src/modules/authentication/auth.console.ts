@@ -3,15 +3,15 @@ import { Command, Console } from "nestjs-console";
 @Console()
 export class AuthConsole {
 
-  constructor(
-  ) {
-  }
+    constructor(
+    ) {
+    }
 
-  @Command({ command: "register <email> <password> <role>" })
-  async autoCompleteStake(
-    email: string,
-    password: string,
-  ): Promise<void> {
-    console.log("User created");
-  }
+    @Command({ command: "register <email> <password> <role>" })
+    async autoCompleteStake(
+        email: string,
+        password: string,
+    ): Promise<void> {
+        console.log("User created");
+    }
 }

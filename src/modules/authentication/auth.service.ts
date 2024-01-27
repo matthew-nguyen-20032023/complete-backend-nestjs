@@ -1,57 +1,44 @@
-import * as bcrypt from "bcrypt";
+const bcrypt = require('bcrypt');
 import { JwtService } from "@nestjs/jwt";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { AuthMessageError } from "src/modules/authentication/auth.const";
-import { ILoginResponse } from "src/modules/authentication/auth.interface";
+import { AuthMessageFailed } from "src/modules/authentication/auth.const";
+import { UserRepository } from "src/models/repositories/user.repository";
+import { UserEntity } from "src/models/entities/user.entity";
 
 @Injectable()
 export class AuthService {
 
-  constructor(
-    private jwtService: JwtService
-  ) {
-  }
+    constructor(
+        private readonly userRepository: UserRepository,
+        private jwtService: JwtService
+    ) {}
 
-  public async validateUser(email: string, pass: string): Promise<any> {
-    // const user = await this.userRepository.getUserByEmail(email);
-    // if (user && user.password === pass) {
-    //   const { password, ...result } = user;
-    //   return result;
-    // }
-    return null;
-  }
-
-  public static async checkPasswordMatch(
-    password: string,
-    hashPassword: string,
-    errorMessage: string
-  ): Promise<void> {
-    const isMatchPassword = await bcrypt.compare(password, hashPassword);
-    if (!isMatchPassword) {
-      throw new HttpException(
-        { message: errorMessage },
-        HttpStatus.BAD_REQUEST
-      );
+    public async register(userName: string, password: string): Promise<UserEntity> {
+        const salt = await bcrypt.genSalt(Number(process.env.SALT_OR_ROUNDS));
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const newUser = new UserEntity();
+        newUser.username = userName;
+        newUser.password = hashedPassword;
+        return await this.userRepository.save(newUser);
     }
-  }
 
-  public async login(email: string, password: string): Promise<ILoginResponse> {
-    // const user = await this.userRepository.getUserByEmail(email);
+    public async login(userName: string, password: string): Promise<{ access_token: string }> {
+        const user = await this.userRepository.getUserByUsername(userName);
 
-    // await AuthService.checkPasswordMatch(
-    //     password,
-    //     user.password,
-    //     AuthMessageError.WrongEmailOrPassword
-    // );
-    // const accessToken = this.jwtService.sign({
-    //   id: user._id,
-    //   email: user.email,
-    //   role: user.role,
-    // });
+        if (!user) {
+            throw new HttpException({
+                message: AuthMessageFailed.UsernameOrPasswordIncorrect
+            }, HttpStatus.BAD_REQUEST);
+        }
 
-    return {
-      accessToken: 'ahihi',
-      userId: '1',
-    };
-  }
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordMatch) throw new HttpException({
+            message: AuthMessageFailed.UsernameOrPasswordIncorrect
+        }, HttpStatus.BAD_REQUEST);
+
+        return {
+            access_token: await this.jwtService.signAsync({ userId: user.id, username: user.username })
+        };
+    }
 }
